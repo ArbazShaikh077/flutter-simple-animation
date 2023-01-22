@@ -1,74 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 
-class AdvancedAnimationExample extends StatefulWidget {
+class AnimationScreen extends StatefulWidget {
   @override
-  _AdvancedAnimationExampleState createState() =>
-      _AdvancedAnimationExampleState();
+  _AnimationScreenState createState() => _AnimationScreenState();
 }
 
-class _AdvancedAnimationExampleState extends State<AdvancedAnimationExample>
+class _AnimationScreenState extends State<AnimationScreen>
     with TickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-  late AnimationController _controller;
+  late AnimationController _animationController1, _animationController2;
+  late Animation<double> _animation1, _animation2;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+
+    _animationController1 = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: Duration(seconds: 1),
     );
-    _animation = Tween<double>(begin: 0, end: 200).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-    _controller = AnimationController(
+    _animationController2 = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: Duration(seconds: 2),
     );
+    _animation1 = Tween(begin: 0.0, end: 1.0).animate(_animationController1);
+    _animation2 = Tween(begin: 0.0, end: 1.0).animate(_animationController2);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Advanced Animation Example'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Hero(
-              tag: 'item-1',
-              child: Image.network(
-                  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97'),
-            ),
-            const SizedBox(height: 20),
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return Container(
-                  width: _animation.value,
-                  height: _animation.value,
-                  child: child,
-                );
-              },
-              child: Image.network(
-                  'https://images.unsplash.com/photo-1517694712202-14dd9538aa97'),
-            ),
-            SizedBox(height: 20),
-            // StaggeredAnimation(
-            //   controller: _controller,
-            //   delay: Duration(milliseconds: 100),
-            //   duration: Duration(milliseconds: 500),
-            //   child: Text('Hello, World!'),
-            // ),
-          ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            _animationController1.forward();
+            _animationController2.forward();
+          },
+          child: Icon(Icons.play_arrow),
         ),
-      ),
-    );
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                  height: 40,
+                  child: RiveAnimation.network(
+                      'https://cdn.rive.app/animations/vehicles.riv')),
+              SizedBox(
+                  height: 40,
+                  child: RiveAnimation.network(
+                      'https://cdn.rive.app/animations/vehicles.riv')),
+              SizedBox(
+                  height: 40,
+                  child: RiveAnimation.network(
+                      'https://cdn.rive.app/animations/vehicles.riv')),
+              ScaleTransition(
+                scale: _animation1,
+                child: Image.network(
+                    'https://images.unsplash.com/photo-1661956602139-ec64991b8b16?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=365&q=80'),
+              ),
+              FadeTransition(
+                opacity: _animation2,
+                child: Text('Welcometo the Animation Screen'),
+              ),
+            ],
+          ),
+        ));
   }
 }
